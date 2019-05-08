@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CompoundButton
 import androidx.recyclerview.widget.RecyclerView
 import com.rjain90.engineeraiassignment.R
 import com.rjain90.engineeraiassignment.model.Post
@@ -11,7 +12,10 @@ import kotlinx.android.synthetic.main.item_post.view.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-class PostAdapter(private var items: MutableList<Post>, val context: Context) :
+class PostAdapter(private var items: MutableList<Post>,
+                  private val context: Context,
+                  private val onClickListener: View.OnClickListener,
+                  private val onCheckedChangeListener: CompoundButton.OnCheckedChangeListener) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val itemFromDateFormat = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS'Z'", Locale.getDefault())
@@ -33,6 +37,13 @@ class PostAdapter(private var items: MutableList<Post>, val context: Context) :
         val date = itemFromDateFormat.parse(items[position].createdAt)
         (holder as ItemViewHolder).tvCreatedAt.text = itemToDateFormat.format(date)
         holder.tvTitle.text = items[position].title
+
+        holder.itemView.tag = position
+        holder.itemView.setOnClickListener(onClickListener)
+
+        holder.switchPost.isChecked = items[position].isSelected
+        holder.switchPost.tag = position
+        holder.switchPost.setOnCheckedChangeListener(onCheckedChangeListener)
     }
 
     override fun getItemViewType(position: Int): Int {
